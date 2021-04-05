@@ -4,22 +4,37 @@ const request = require('supertest');
 const app = require('../lib/app');
 const mailer = require('../lib/services/EmailService');
 
-jest.mock('mailer', () => () => ({}));
+
+jest.mock('../lib/services/EmailService.js');
 
 describe('new-app routes', () => {
-  beforeEach(() => {
+  beforeAll(() => {
     return setup(pool);
   });
+  //post 
   it('sends a new email', () => {
     return request(app)
-      .post('/api/v1/orders')
-      .send({ quantity: 10 })
+      .post('/api/contact')
+      .send({"sender": "new email", "messageSubject": "whatever"})
       .then((res) => {
-        console.log(app.sendEmail.mock);
         expect(mailer).toHaveBeenCalledTimes(1);
         expect(res.body).toEqual({
           id: '1',
-          quantity: 10,
+          sender: 'new email',
+          messageSubject: 'whatever',
+        });
+      });
+  });
+  //get
+  it('sends a new email', () => {
+    return request(app)
+      .get('/api/contact')
+      .then((res) => {
+        expect(mailer).toHaveBeenCalledTimes(1);
+        expect(res.body[0]).toEqual({
+          id: '1',
+          sender: 'new email',
+          messageSubject: 'whatever',
         });
       });
   });
