@@ -4,6 +4,6 @@ DROP TABLE IF EXISTS orders;
 -- BIGINT or BIGINTEGER or BIGSERIAL -> 64bit number
 CREATE TABLE orders (
   id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  sender TEXT, 
+  message_body TEXT, 
   message_subject TEXT
 );
