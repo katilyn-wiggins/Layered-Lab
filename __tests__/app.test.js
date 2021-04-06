@@ -69,4 +69,18 @@ describe('new-app routes', () => {
     expect(mailer).toHaveBeenCalledTimes(1);
     expect(res.body).toEqual({"id": "1", "messageBody": "delete test", "messageSubject": "delete"});
   });
+
+  //delete again 
+  it('deletes an order in our database with id 2', async () => {
+    await Order.insert({"messageBody": "delete test", "messageSubject": "delete"},);
+    await Order.insert({"messageBody": "delete test 2", "messageSubject": "delete 2"});
+    // console.log(newOrder);
+
+    const res = await request(app)
+      .delete('/api/contact/2')
+
+
+    expect(mailer).toHaveBeenCalledTimes(1);
+    expect(res.body).toEqual({"id": "2", "messageBody": "delete test 2", "messageSubject": "delete 2"});
+  });
 });
