@@ -1,6 +1,17 @@
 const form = document.getElementById('anon');
 const ul = document.getElementById('anon-messages');
 
+fetch('/api/contact')
+    .then((res) => res.json())
+    .then((totalMessage) => {
+        totalMessage.forEach((message) => {
+            const li = document.createElement('li');
+            li.textContent = `${message.messageSubject}: ${message.messageBody}`
+            ul.appendChild(li);
+        });
+    });
+
+
 form.addEventListener('submit', (event) => {
     event.preventDefault();
 
@@ -20,12 +31,3 @@ form.addEventListener('submit', (event) => {
         .then((json) => console.log(json));
 });
 
-fetch('/api/contact')
-    .then((res) => res.json())
-    .then((totalMessage) => {
-        totalMessage.forEach((message) => {
-            const li = document.createElement('li');
-            li.textContent = `${message.messageSubject} ${message.messageBody}`
-            ul.appendChild(li);
-        });
-    });
