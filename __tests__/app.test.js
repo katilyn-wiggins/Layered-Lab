@@ -2,7 +2,7 @@ const pool = require('../lib/utils/pool');
 const setup = require('../data/setup');
 const request = require('supertest');
 const app = require('../lib/app');
-const mailer = require('../lib/services/EmailService');
+const EmailService = require('../lib/services/EmailService');
 const Order = require('../lib/models/Order');
 
 jest.mock('../lib/services/EmailService.js');
@@ -17,7 +17,7 @@ describe('new-app routes', () => {
       .post('/api/contact')
       .send({"messageBody": "new email", "messageSubject": "whatever"})
       .then((res) => {
-        expect(mailer).toHaveBeenCalledTimes(1);
+        expect(EmailService.createEmail).toHaveBeenCalledTimes(1);
         expect(res.body).toEqual({
           id: '1',
           messageBody: 'new email',
@@ -41,14 +41,15 @@ describe('new-app routes', () => {
 
     const res = await request(app)
       .put('/api/contact/1')
-      .send({messageBody: "2:55 pm"});
-
-    expect(mailer).toHaveBeenCalledTimes(1);
-    expect(res.body).toEqual({
-      id: '1',
-      messageBody: '2:55 pm',
-      messageSubject: 'hello'
-    });
+      .send({messageBody: "2:55 pm"})
+      .then((res) => {
+        expect(EmailService.createEmail).toHaveBeenCalledTimes(1);
+        expect(res.body).toEqual({
+          id: '1',
+          messageBody: '2:55 pm',
+          messageSubject: 'hello',
+        });
+      });
   });
 
   //delete
@@ -60,7 +61,7 @@ describe('new-app routes', () => {
       .delete('/api/contact/1')
 
 
-    expect(mailer).toHaveBeenCalledTimes(1);
+    expect(EmailService.createEmail).toHaveBeenCalledTimes(1);
     expect(res.body).toEqual({"id": "1", "messageBody": "delete test", "messageSubject": "delete"});
   });
 
@@ -73,7 +74,7 @@ describe('new-app routes', () => {
       .delete('/api/contact/2')
 
 
-    expect(mailer).toHaveBeenCalledTimes(1);
+    expect(EmailService.createEmail).toHaveBeenCalledTimes(1);
     expect(res.body).toEqual({"id": "2", "messageBody": "delete test 2", "messageSubject": "delete 2"});
   });
 
@@ -89,7 +90,7 @@ describe('new-app routes', () => {
       .get('/api/contact')
 
 
-    expect(mailer).toHaveBeenCalledTimes(1);
+    expect(EmailService.createEmail).toHaveBeenCalledTimes(1);
     expect(res.body).toEqual([{"id": "1", "messageBody": "test message 1", "messageSubject": "test subject 1"}, {"id": "2", "messageBody": "test message 2", "messageSubject": "test subject 2"}]);
   });
 });
